@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-
 	"github.com/gorilla/mux"
 	"github.com/xmin-github/go-restapi-example/models"
+        "github.com/xmin-github/go-restapi-example/dao"
+        "github.com/xmin-github/go-restapi-example/config"
 	"gopkg.in/mgo.v2/bson"
 )
 
