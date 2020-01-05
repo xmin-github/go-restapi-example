@@ -4,19 +4,18 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/xmin-github/go-restapi-example/models"
-        "github.com/xmin-github/go-restapi-example/dao"
-        "github.com/xmin-github/go-restapi-example/config"
 	"gopkg.in/mgo.v2/bson"
 )
 
-var config = Config{}
-var dao = MoviesDAO{}
+var conf = Config{}
+var dal = MoviesDAO{}
 
 // GET list of movies
 func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
-	movies, err := dao.FindAll()
+	movies, err := dal.FindAll()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -27,7 +26,7 @@ func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
 // GET a movie by its ID
 func FindMovieEndpoint(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	movie, err := dao.FindById(params["id"])
+	movie, err := dal.FindById(params["id"])
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Movie ID")
 		return
@@ -44,7 +43,7 @@ func CreateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	movie.ID = bson.NewObjectId()
-	if err := dao.Insert(movie); err != nil {
+	if err := dal.Insert(movie); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -59,7 +58,7 @@ func UpdateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	if err := dao.Update(movie); err != nil {
+	if err := dal.Update(movie); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -74,7 +73,7 @@ func DeleteMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	if err := dao.Delete(movie); err != nil {
+	if err := dal.Delete(movie); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -94,11 +93,11 @@ func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
 
 // Parse the configuration file 'config.toml', and establish a connection to DB
 func init() {
-	config.Read()
+	conf.Read()
 
-	dao.Server = config.Server
-	dao.Database = config.Database
-	dao.Connect()
+	dal.Server = conf.Server
+	dal.Database = conf.Database
+	dal.Connect()
 }
 
 // Define HTTP request routes
