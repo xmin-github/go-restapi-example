@@ -6,12 +6,15 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/xmin-github/go-restapi-example/config"
+	"github.com/xmin-github/go-restapi-example/dao"
 	"github.com/xmin-github/go-restapi-example/models"
+
 	"gopkg.in/mgo.v2/bson"
 )
 
-var conf = Config{}
-var dal = MoviesDAO{}
+var conf = config.Config{}
+var dal = dao.MoviesDAO{}
 
 // GET list of movies
 func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
